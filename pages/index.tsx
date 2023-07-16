@@ -1,8 +1,33 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
+import { getSession, signOut } from "next-auth/react";
+import { NextPageContext, InferGetServerSidePropsType } from "next";
 
-const inter = Inter({ subsets: ["latin"] });
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context);
 
-export default function Home() {
-  return <h1 className="text-2xl text-green-500">Netflix Clone</h1>;
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
+
+export default function Home(props: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  return (
+    <>
+      <h1 className="text-5xl text-green-500">Netflix Clone</h1>;
+      <button
+        onClick={() => signOut()}
+        className="h-10 w-full bg-white hover:opacity-80"
+      >
+        Logout!
+      </button>
+    </>
+  );
 }
